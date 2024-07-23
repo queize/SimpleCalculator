@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.0)
+
+project(SimpleCalculator)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(HEADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/include")
+
+file(GLOB SOURCES "${SOURCE_DIR}/*.cpp")
+file(GLOB HEADERS "${HEADER_DIR}/*.hpp")
+
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
