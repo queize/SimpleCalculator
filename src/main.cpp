@@ -3,8 +3,8 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
-#include <utility>
 
+// Проверка строки на число
 bool is_number(const std::string &s)
 {
     return !s.empty() && std::find_if(s.begin(),
@@ -12,9 +12,33 @@ bool is_number(const std::string &s)
                                       { return !std::isdigit(c); }) == s.end();
 }
 
-long long CalCulateFromString(const std::string &str)
+// Функция, чтобы проверить, является ли символ оператором
+bool isoperator(char c)
 {
-    std::stack<long long> stk;
+    return (c == '+' || c == '-' || c == '*' || c == '/');
+}
+
+// Функция, чтобы получить приоритет оператора
+int getprecedence(char c)
+{
+    if (c == '*' || c == '/')
+    {
+        return 2;
+    }
+    else if (c == '+' || c == '-')
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+// Функция для расчета выражение из строки вида ОПЗ
+double CalCulateFromString(const std::string &str)
+{
+    std::stack<double> stk;
     stk.push(0);
     std::stringstream ss(str);
     while (ss)
@@ -27,66 +51,128 @@ long long CalCulateFromString(const std::string &str)
         }
         else if (check_str == "+")
         {
-            int top_num = stk.top();
+            double top_num = stk.top();
             stk.pop();
-            int bottom_num = stk.top();
+            double bottom_num = stk.top();
             stk.pop();
-            stk.push(top_num + bottom_num);
+            stk.push(bottom_num + top_num);
         }
         else if (check_str == "-")
         {
-            int top_num = stk.top();
+            double top_num = stk.top();
             stk.pop();
-            int bottom_num = stk.top();
+            double bottom_num = stk.top();
             stk.pop();
-            stk.push(top_num - bottom_num);
+            stk.push(bottom_num - top_num);
         }
         else if (check_str == "*")
         {
-            int top_num = stk.top();
+            double top_num = stk.top();
             stk.pop();
-            int bottom_num = stk.top();
+            double bottom_num = stk.top();
             stk.pop();
-            stk.push(top_num * bottom_num);
+            stk.push(bottom_num * top_num);
         }
         else if (check_str == "/")
         {
-            int top_num = stk.top();
+            double top_num = stk.top();
             stk.pop();
-            int bottom_num = stk.top();
+            double bottom_num = stk.top();
             stk.pop();
-            stk.push(top_num / bottom_num);
+            if (top_num == 0)
+            {
+                throw std::invalid_argument("Division by zero");
+            }
+            stk.push(bottom_num / top_num);
         }
     }
     return stk.top();
 }
 
-std::string FormatString(const std::string &str)
+// Функция для преобразования выражения Infix в PostFix (обратная польская запись)
+std::string infixtopostfix(const std::string &infix)
 {
-    std::string str_new = str;
-    std::stack<std::pair<char, size_t>> stk_chr;
-    for(const auto &chr : str)
+    std::stack<char> operatorstack;
+    std::string postfix = "";
+    long long number = 0;
+    for (int i = 0; i < infix.length(); i++)
     {
-        if(std::isdigit(chr))
+        char currentchar = infix[i];
+
+        // Если текущая строка является числом, добавим его в PostFix
+        if (isdigit(currentchar))
         {
-            str_new += chr + ' ';   
+            number *= 10;
+            number += currentchar - '0';
+            char next_char = infix[i + 1]; 
+            if (!(isdigit(next_char)))
+            {
+                postfix += std::to_string(number) + ' ';
+                number = 0;
+            }
         }
-        else if(stk_chr.empty())
-        {   
-            if (chr == '(') stk_chr.push(std::make_pair(chr, 1));
-            if (chr == '+' || chr == '-') stk_chr.push(std::make_pair(chr, 2));
-            if (chr == '*' || chr == '/') stk_chr.push(std::make_pair(chr, 3))
+        // Если текущий символ является оператором
+        else if (isoperator(currentchar))
+        {
+            // Операторы с более высоким или равным приоритетом из стека
+            while (!operatorstack.empty() && getprecedence(currentchar) <= getprecedence(operatorstack.top()))
+            {
+                postfix += operatorstack.top();
+                postfix += ' ';
+                operatorstack.pop();
+            }
+            // Выталкивание текущего оператора на стек
+            operatorstack.push(currentchar);
+        }
+
+        // Если текущий символ является левой скобкой, то поместим его в стек
+        else if (currentchar == '(')
+        {
+            operatorstack.push(currentchar);
+        }
+
+        // Если текущий символ является правой скобкой, операторы выбиваются из стека до тех пор, пока не найдены левая скобка
+        else if (currentchar == ')')
+        {
+            while (!operatorstack.empty() && operatorstack.top() != '(' )
+            {
+                postfix += operatorstack.top();
+                postfix += ' ';
+                operatorstack.pop();
+            }
+            // занять левую скобку
+            if (!operatorstack.empty())
+            {
+                operatorstack.pop();
+            }
         }
     }
-    return str;
+
+    // выбить оставшихся операторов из стека
+    while (!operatorstack.empty())
+    {
+        postfix += operatorstack.top();
+        postfix += ' ';
+        operatorstack.pop();
+    }
+
+    return postfix;
 }
 
 int main()
 {
     while(true)
     {
-        std::string str;
-        std::getline(std::cin, str);
-        std::cout << CalCulateFromString(str) << '\n';
+        try
+        {
+            std::string str;
+            std::getline(std::cin, str);
+            str = infixtopostfix(str);
+            std::cout << CalCulateFromString(str) << '\n';
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
     }
 }
