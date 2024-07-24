@@ -52,5 +52,7 @@ _deps
 # External projects
 *-prefix/
 build/
+.cache
+.vscode
 
 # End of https://www.toptal.com/developers/gitignore/api/c++,cmake
