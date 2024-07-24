@@ -40,7 +40,6 @@ int getprecedence(char c)
 double CalCulateFromString(const std::string &str)
 {
     std::stack<double> stk;
-    std::stack<double> stk;
     stk.push(0);
     std::stringstream ss(str);
     while (ss)
@@ -54,43 +53,34 @@ double CalCulateFromString(const std::string &str)
         else if (check_str == "+")
         {
             double top_num = stk.top();
-            double top_num = stk.top();
             stk.pop();
             double bottom_num = stk.top();
-            double bottom_num = stk.top();
             stk.pop();
-            stk.push(bottom_num + top_num);
             stk.push(bottom_num + top_num);
         }
         else if (check_str == "-")
         {
             double top_num = stk.top();
-            double top_num = stk.top();
             stk.pop();
             double bottom_num = stk.top();
-            double bottom_num = stk.top();
             stk.pop();
-            stk.push(bottom_num - top_num);
             stk.push(bottom_num - top_num);
         }
         else if (check_str == "*")
         {
             double top_num = stk.top();
-            double top_num = stk.top();
             stk.pop();
             double bottom_num = stk.top();
-            double bottom_num = stk.top();
             stk.pop();
-            stk.push(bottom_num * top_num);
             stk.push(bottom_num * top_num);
         }
         else if (check_str == "/")
         {
             double top_num = stk.top();
-            double top_num = stk.top();
+
             stk.pop();
             double bottom_num = stk.top();
-            double bottom_num = stk.top();
+
             stk.pop();
             if (top_num == 0)
             {
@@ -180,18 +170,6 @@ std::string infixtopostfix(const std::string &infix)
 int main()
 {
     while(true)
-    {
-        try
-        {
-            std::string str;
-            std::getline(std::cin, str);
-            str = infixtopostfix(str);
-            std::cout << CalCulateFromString(str) << '\n';
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
     {
         try
         {
