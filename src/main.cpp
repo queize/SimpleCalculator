@@ -77,16 +77,9 @@ double CalCulateFromString(const std::string &str)
         else if (check_str == "/")
         {
             double top_num = stk.top();
-
             stk.pop();
             double bottom_num = stk.top();
-
             stk.pop();
-            if (top_num == 0)
-            {
-                throw std::invalid_argument("Division by zero");
-            }
-            stk.push(bottom_num / top_num);
             if (top_num == 0)
             {
                 throw std::invalid_argument("Division by zero");
