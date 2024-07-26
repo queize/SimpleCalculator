@@ -5,7 +5,6 @@
 #include <algorithm>
 
 // Проверка строки на число
-// Проверка строки на число
 bool is_number(const std::string &s)
 {
     return !s.empty() && std::find_if(s.begin(),
@@ -52,10 +51,10 @@ double CalCulateFromString(const std::string &str)
         }
         else if (check_str == "+")
         {
-            double top_num = stk.top();
-            stk.pop();
-            double bottom_num = stk.top();
-            stk.pop();
+        double top_num = stk.top();
+        stk.pop();
+        double bottom_num = stk.top();
+        stk.pop();        
             stk.push(bottom_num + top_num);
         }
         else if (check_str == "-")
@@ -132,7 +131,7 @@ std::string infixtopostfix(const std::string &infix)
             operatorstack.push(currentchar);
         }
 
-        // Если текущий символ является правой скобкой, операторы выбиваются из стека до тех пор, пока не найдены левая скобка
+        // Если текущий символ является правой скобкой, операторы выбиваются из стека до тех пор, пока не найдена левая скобка
         else if (currentchar == ')')
         {
             while (!operatorstack.empty() && operatorstack.top() != '(' )
@@ -141,7 +140,7 @@ std::string infixtopostfix(const std::string &infix)
                 postfix += ' ';
                 operatorstack.pop();
             }
-            // занять левую скобку
+            // Выбить левую скобку
             if (!operatorstack.empty())
             {
                 operatorstack.pop();
@@ -149,7 +148,7 @@ std::string infixtopostfix(const std::string &infix)
         }
     }
 
-    // выбить оставшихся операторов из стека
+    // выбить оставшиеся операторы из стека
     while (!operatorstack.empty())
     {
         postfix += operatorstack.top();
